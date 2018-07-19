@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="mainActivityBG_POT">#a13e60</color>
+    <color name="mainActivityBG_LAN">#a38690</color>
+    <color name="contact_list">#da862d</color>
+    <color name="contact_row_bg_1">#d79f63</color>
+    <color name="contact_row_bg_2">#834b0f</color>
+    <color name="contact_details">#88b92d</color>
+    <color name="contact_root">#f54</color>
+</resources>
