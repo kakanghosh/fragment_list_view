@@ -3,6 +3,7 @@ package com.iquantile.fragmentcontactlist;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -12,9 +13,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.iquantile.fragmentcontactlist.fragments.ContactDetailsFragment;
 import com.iquantile.fragmentcontactlist.fragments.ContactListFragment;
 import com.iquantile.fragmentcontactlist.interfaces.ContactListHelper;
 import com.iquantile.fragmentcontactlist.models.Contact;
@@ -60,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements ContactListHelper
     private void initContactListFragment() {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         Fragment contactListFragment = new ContactListFragment();
-        transaction.add(R.id.frameLayout_contact_list, contactListFragment);
+        transaction.replace(R.id.frameLayout_contact_list, contactListFragment);
         transaction.commit();
     }
 
@@ -86,8 +89,53 @@ public class MainActivity extends AppCompatActivity implements ContactListHelper
     }
 
     @Override
+    public void makeCall(String number) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, CALL_REQUEST_CODE);
+        } else {
+            Intent intent = new Intent(Intent.ACTION_CALL);
+            intent.setData(Uri.parse("tel:" + number));
+            startActivity(intent);
+        }
+    }
+
+    @Override
     public void gotoDetails(int index) {
-        Toast.makeText(this, "Index: "+index, Toast.LENGTH_SHORT).show();
+        this.selectedIndex = index;
+        Log.d("config", "Details: " + selectedIndex);
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        Fragment contactDetailsFragment = new ContactDetailsFragment();
+        if (findViewById(R.id.main_activity_pot) != null){
+            transaction.add(R.id.frameLayout_contact_list, contactDetailsFragment);
+            transaction.addToBackStack(null);
+        }else {
+            transaction.replace(R.id.frameLayout_contact_details, contactDetailsFragment);
+        }
+        /*transaction.addToBackStack(null);*/
+        transaction.commit();
+    }
+
+    public void gotoDetails(int parent, int index) {
+        this.selectedIndex = index;
+        Log.d("config", "Details: " + selectedIndex);
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        Fragment contactDetailsFragment = new ContactDetailsFragment();
+        if (findViewById(R.id.main_activity_pot) != null){
+            transaction.add(parent, contactDetailsFragment);
+            transaction.addToBackStack(null);
+        }else {
+            transaction.replace(parent, contactDetailsFragment);
+        }
+        /*transaction.addToBackStack(null);*/
+        transaction.commit();
+    }
+
+    @Override
+    public Contact getSelectedContact() {
+        if (this.selectedIndex != -1)
+            return this.contactList.get(this.selectedIndex);
+        else
+            return this.contactList.get(0);
     }
 
     @Override
@@ -108,6 +156,19 @@ public class MainActivity extends AppCompatActivity implements ContactListHelper
                 }
                 startActivity(intent);
             }
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setContentView(R.layout.activity_main);
+        //fragmentManager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        initContactListFragment();
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            gotoDetails(R.id.frameLayout_contact_list, selectedIndex);
+        }else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            gotoDetails(R.id.frameLayout_contact_details, selectedIndex);
         }
     }
 }

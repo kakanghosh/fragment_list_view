@@ -1,8 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="match_parent"
+    android:weightSum="4"
+    android:clickable="true"
+    android:background="@color/colorPrimary">
+    <ImageView
+        android:id="@+id/imageView_contact_details"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:src="@drawable/friendship"
+        android:layout_weight="2"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:weightSum="2"
+        android:orientation="vertical"
+        android:layout_margin="5dp">
+        <TextView
+            android:id="@+id/textView_contact_name_details"
+            android:text="Mr. Bean"
+            android:gravity="center"
+            android:textSize="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:weightSum="4"
+            android:layout_margin="10dp">
+            <ImageButton
+                android:id="@+id/imageButton_call_details"
+                android:src="@drawable/phone_call"
+                android:scaleType="fitXY"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="#00000000"
+                android:layout_weight="2"
+                android:layout_margin="10dp"/>
+            <ImageButton
+                android:id="@+id/imageButton_message_details"
+                android:src="@drawable/mail"
+                android:scaleType="fitXY"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="#00000000"
+                android:layout_weight="2"
+                android:layout_margin="10dp"/>
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>
