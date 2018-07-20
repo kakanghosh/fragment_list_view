@@ -63,7 +63,11 @@ public class MainActivity extends AppCompatActivity implements ContactListHelper
     private void initContactListFragment() {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         Fragment contactListFragment = new ContactListFragment();
-        transaction.replace(R.id.frameLayout_contact_list, contactListFragment);
+        Bundle bundle = new Bundle();
+        String contactListString = new Gson().toJson(this.contactList);
+        bundle.putString("contact-list", contactListString);
+        contactListFragment.setArguments(bundle);
+        transaction.add(R.id.frameLayout_contact_list, contactListFragment);
         transaction.commit();
     }
 
@@ -105,6 +109,11 @@ public class MainActivity extends AppCompatActivity implements ContactListHelper
         Log.d("config", "Details: " + selectedIndex);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         Fragment contactDetailsFragment = new ContactDetailsFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putString("contact", new Gson().toJson(contactList.get(index)));
+        contactDetailsFragment.setArguments(bundle);
+
         if (findViewById(R.id.main_activity_pot) != null){
             transaction.add(R.id.frameLayout_contact_list, contactDetailsFragment);
             transaction.addToBackStack(null);
@@ -120,6 +129,9 @@ public class MainActivity extends AppCompatActivity implements ContactListHelper
         Log.d("config", "Details: " + selectedIndex);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         Fragment contactDetailsFragment = new ContactDetailsFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("contact", new Gson().toJson(contactList.get(index)));
+        contactDetailsFragment.setArguments(bundle);
         if (findViewById(R.id.main_activity_pot) != null){
             transaction.add(parent, contactDetailsFragment);
             transaction.addToBackStack(null);
@@ -145,13 +157,6 @@ public class MainActivity extends AppCompatActivity implements ContactListHelper
                 Intent intent = new Intent(Intent.ACTION_CALL);
                 intent.setData(Uri.parse("tel:" + contactList.get(selectedIndex).phoneNumber));
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
                     return;
                 }
                 startActivity(intent);
@@ -163,12 +168,20 @@ public class MainActivity extends AppCompatActivity implements ContactListHelper
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         setContentView(R.layout.activity_main);
-        //fragmentManager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fragmentManager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         initContactListFragment();
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
-            gotoDetails(R.id.frameLayout_contact_list, selectedIndex);
+            if (selectedIndex >= 0){
+                gotoDetails(R.id.frameLayout_contact_list, selectedIndex);
+            }else {
+                gotoDetails(R.id.frameLayout_contact_list, 0);
+            }
         }else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE){
-            gotoDetails(R.id.frameLayout_contact_details, selectedIndex);
+            if (selectedIndex >= 0){
+                gotoDetails(R.id.frameLayout_contact_details, selectedIndex);
+            }else {
+                gotoDetails(R.id.frameLayout_contact_details, 0);
+            }
         }
     }
 }

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.google.gson.Gson;
 import com.iquantile.fragmentcontactlist.R;
 import com.iquantile.fragmentcontactlist.interfaces.ContactListHelper;
 import com.iquantile.fragmentcontactlist.models.Contact;
@@ -45,8 +46,7 @@ public class ContactDetailsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         this.helper = (ContactListHelper) getActivity();
-        contact = helper.getSelectedContact();
-
+        contact = new Gson().fromJson(getArguments().getString("contact"), Contact.class);
         contactHolder.contactImageView.setImageResource(contact.contactImage);
         contactHolder.contactNameTextView.setText(contact.contactName);
 

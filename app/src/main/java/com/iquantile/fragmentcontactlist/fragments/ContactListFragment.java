@@ -41,7 +41,7 @@ public class ContactListFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         this.helper = (ContactListHelper) getActivity();
-        String stringList = helper.getBundle().getString("contact-list");
+        String stringList = getArguments().getString("contact-list");
         this.contactList = new Gson().fromJson(stringList, new TypeToken<ArrayList<Contact>>(){}.getType());
         this.contactListViewAdapter = new ContactListViewAdapter(getActivity(), this.contactList, helper);
         this.contactListView.setAdapter(contactListViewAdapter);
